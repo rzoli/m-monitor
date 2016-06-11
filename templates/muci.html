@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{name}} Monitor: {{age}} {{weight}} {{height}}</title>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+<html>
+<body>
+<table width=100%>
+<tr>
+<td>
+<form action="" method="post" id="bejegyzes">
+  Bejegyzés Dátum <input type="date" name="datum" value={{today}}>
+  Idő <input type="time" name="ido" value={{now}}> <br>
+  Kategória  
+        <select name="kategoria" form="bejegyzes">
+          <option value=""></option>
+               {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+        </select> <br>
+  <input type="text" name="bejegyzes" size="30%">
+  <input type="submit" name="rogzit" value="Rögzít"><br>
+        Elvégezte
+       <select name="elvegezte" form="bejegyzes">
+          <option value=""></option>
+          <option value="Anya">Anya</option>
+          <option value="Apa">Apa</option>
+          <option value="Más">Más</option>
+        </select> 
+        
+<br><br>
+  Javít
+   <select name="sorszam" form="bejegyzes">
+     <option value=""></option>
+     {% for eventid in eventids %}
+        <option value="{{ eventid }}">{{ eventid }}</option>
+    {% endfor %}
+
+  </select> 
+  <input type="submit" value="Töröl" name="torol"><br>
+</form>
+<form action="" method="post" id="stat">
+Statisztika
+        <select name="stat_nev" form="stat">
+          <option value=""></option>
+          <option value="testsuly">Testsúly</option>
+          <option value="magassag">Magasság</option>
+          <option value="alvasido">Alvásidő</option>
+          <option value="alvas-eves-periodus">Alvás-evés periódus</option>
+        </select> 
+  <input type="submit" value="Mutat" name="mutat"> 
+</form>
+<form action="" method="post" id="logout">
+    <input type="submit" value="Kilépes" name="kilepes">
+</form>
+
+</td>
+<td>
+<!--
+<form action="" method="post" id="kereses">
+  Keresés
+        <select name="kereses_tipusa" form="kereses">
+          <option value="Dátum">dátum</option>
+          <option value="Idő">idő</option>
+          <option value="Kategória">kategória</option>
+          <option value="Kulcsszó">kulcsszó</option>
+        </select> szerint:<br>
+
+  <input type="date" name="datum" value=#date_oldest>-tól <input type="date" name="datum" value=#date_latest>-ig<br>
+  <input type="time" name="ido" value=8:00>-tól <input type="time" name="ido" value=20:00>-ig<br>
+  Kategória
+        <select name="kereses_kategoria" form="kereses">
+          <option value=""></option>
+          <option value="Testsúly">Testsúly</option>
+          <option value="Magasság">Magasság</option>
+          <option value="Szopás">Szoptatás</option>
+          <option value="Evés">Evés</option>
+          <option value="furdes">Fürdetés</option>
+          <option value="Séta">Séta</option>
+          <option value="Játék">Játék</option>
+        </select> <br>
+  Kulcsszó <input type="text" name="kulcsszo"><br>
+  <input type="submit" value="Frissít" value="frissit">
+  <input type="submit" value="Alaphelyzet" value="alaphelyzet">
+</form>
+-->
+</td>
+</tr>
+<table>
+<br>
+
+<table width=80% class="data">
+<col width="10%"><col width="10%"><col width="20%"><col width="55%">
+<tr><th>Dátum</th><th>Idő</th><th>Kategória</th><th>Bejegyzés</th></tr>
+{% for event in events %}
+<tr><td>{{ event.date }}</td><td>{{ event.time }}</td><td>{{ event.category }}</td><td>{{ event.note }}</td></tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>

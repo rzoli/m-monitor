@@ -1,0 +1,63 @@
+<style>
+
+    p {
+        line-height: 140%;
+    }
+       body {
+            margin-top: 0.5cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+            padding: 0;
+            font: normal 0.5cm Helvetica sans-serif;
+            color: #889;
+            background: #f8f8f8;
+            line-height: 140%;
+        }
+
+    input[type=submit], select{
+            font: normal 0.4cm Helvetica sans-serif;
+        }
+
+    input[type=submit], input[type=text],input[type=date],input[type=time],select {
+	    border-radius:0.1cm;
+	    -webkit-border-radius:0.1cm;
+	    -moz-border-radius:0.1cm;
+	    border:0;   
+	    height:0.4cm
+        box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+        background: #e8e8f0;
+        color:#889;
+        border:none;
+        outline:none;
+        display: inline-block;
+    }
+
+    input[type=submit] {
+	    width:3cm;
+    }
+
+    select {
+        -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+        -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+        box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+        -webkit-appearance:none;
+        -moz-appearance:none;
+    }
+
+    .data table, .data td, .data th {
+        border-bottom: 2px solid #ddd;
+    }
+
+    .data table {
+        border-collapse: collapse;
+    }
+
+    .data th {
+        height: 50px;
+        text-align: center;
+    }
+
+    .data td {
+        text-align: center;
+    }
+</style>
