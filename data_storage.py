@@ -33,20 +33,46 @@ class DataStorage(object):
         self.db.commit()
         logging.info('database created')
         
-    def add_event(self,timestamp, category='', note='',user='', child='Kismuci'):
+    def add_event(self,timestamp, category='', note='',user='', child='Adel'):
         self.cursor.execute("insert into events(timestamp, category, note, user, child) values ('{0}','{1}','{2}','{3}','{4}')".format(int(timestamp), category, note, user, child))
         self.db.commit()
         logging.info('event added: {0}, {1}, {2}, {3}'.format(timestamp, category,note,user))
         
     def read_events(self):
-        self.cursor.execute("select * from events")
+        rawevents= self.read_raw_events()
+        #Sort raw events first
+        t=[re[0] for re in rawevents]
+        t.sort()
+        events_sorted=[]
+        for ti in t:
+            events_sorted.append([re for re in rawevents if re[0]==ti][0])
         events=[]
-        for line in self.cursor.fetchall():
+        for line in events_sorted:
             d,t=utils.timestamp2ymdhm(line[0]).split(' ')
             event=[d,t]
             event.extend(list(line[1:]))
             events.append(event)
         return events
+        
+    def read_raw_events(self):
+        self.cursor.execute("select * from events")
+        rawevents= [line for line in self.cursor.fetchall()]
+        return rawevents
+        
+    def calculate_timeleft(self):
+        rawevents= self.read_raw_events()
+        magzatkora_events=[re for re in rawevents if 'Magzat kora' in re[1]]
+        if len(magzatkora_events)==0:
+            return ''
+        latest=max([me[0] for me in magzatkora_events])
+        dt=int(time.time()-latest)/(7*86400)
+        kor=[me[2] for me in magzatkora_events if me[0]==latest][0]
+        kor=int(''.join([c for c in kor if c.isdigit()]))
+        szuletesi_datum=[re for re in rawevents if 'megszuletett' in re[2].lower()]
+        if len(szuletesi_datum)==0:
+            return '{0} hetes, {1} het van hatra' .format(kor+dt,40-(kor+dt))
+        else:
+            return '{0} hetes'.format(int((time.time()-szuletesi_datum[0][0])/(7*86400)))
         
     def format_events(self,events):
         return [{'date': e[0], 'time': e[1], 'category': e[2], 'note': ' '.join(e[3:-1])} for e in events]

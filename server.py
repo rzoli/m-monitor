@@ -1,11 +1,11 @@
 #TODO: 
 #TODO: prio2 user session timeout, atnevez: csaladi egeszsegmonitor, szemely kivalaszthato legyen
 ROOT='/tmp'
-CATEGORIES=['Kinga Haskorfogat', 'Kinga Testsuly', 'Testsuly', 'Magassag', 'Szoptatas', 'Eves', 'Seta', 'Jatek', 'Pelenkazas']
+CATEGORIES=['Kinga haskorfogat', 'Kinga testsuly', 'Magzat kora', 'Testsuly', 'Magassag', 'Szoptatas', 'Eves', 'Seta', 'Jatek', 'Pelenkazas']
 from visexpman.engine.generic import utils
 import user,numpy,logging,data_storage,os,time,datetime,sys
 from flask import Flask,request,render_template,Response,redirect,url_for,abort
-from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 logging.basicConfig(filename=os.path.join(ROOT,'server.txt'),level=logging.DEBUG,format='%(asctime)s %(levelname)s\t%(message)s')
 app = Flask(__name__)
 app.config.update(
@@ -41,7 +41,7 @@ def index():
         d.remove_event(timestamp)
     events=d.read_events()[::-1]
     now=time.time()
-    return render_template('muci.html', name='Kismuci',# age='16 het', weight='3000 g', height='15 cm', 
+    return render_template('muci.html', name='Adel', age=d.calculate_timeleft(),#, weight='3000 g', height='15 cm', 
                            today=utils.timestamp2ymd(now), now=utils.timestamp2hm(now),
                            categories=CATEGORIES,
                            events=d.format_events(events), eventids=d.event_ids(events))
@@ -61,6 +61,7 @@ def login():
             return abort(401)
     else:
         return Response('''
+        <title>Muci Monitor</title>
         <form action="" method="post">
             <p><input type=text name=username>
             <p><input type=password name=password>
@@ -85,5 +86,5 @@ if __name__ == "__main__":
             u.add(sys.argv[2],sys.argv[3])
     else:
         app.logger.info('Server started')
-        app.run(host= '0.0.0.0')
+        app.run(host= '0.0.0.0',port=2016)
 
