@@ -73,7 +73,41 @@ class DataStorage(object):
             return '{0} hetes, {1} het van hatra' .format(kor+dt,40-(kor+dt))
         else:
             return '{0} hetes'.format(int((time.time()-szuletesi_datum[0][0])/(7*86400)))
-        
+
+    def szopasi_ido(self):
+        rawevents= self.read_raw_events()
+        szopi=[re for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1]]
+        latest=max([me[0] for me in szopi])
+        dt=round((time.time()-latest)/60/60.,1)
+        return 'Szoptatas ota {0} ora telt el'.format(dt)
+
+    def utolso24ora(self):
+        rawevents= self.read_raw_events()
+        now=time.time()
+        szopi=len([re for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1] and re[0]>now-86400])
+        pisi=len([re for re in rawevents if 'pisi' in re[1].lower() and re[0]>now-86400])
+        kaki=len([re for re in rawevents if 'kaka' in re[1].lower() and re[0]>now-86400])
+        return 'Utobbi 24 oraban/Im Letzten 24 Stunden: {0} szoptatas/Stillen, {1} kaki/Stuhl, {2} pisi/Urin'.format(szopi,kaki,pisi)
+
+    def plot(self):
+        rawevents= self.read_raw_events()
+        #Szoptatas, kaki over time
+        t0='201610301500'#2016 okt 30 3 ora
+        import time,datetime,numpy
+        t0=time.mktime(datetime.datetime.strptime(t0, '%Y%m%d%H%M%S').timetuple())
+        t0=time.time()-7*86400#Utolso 3 nap
+        szopi=[re[0] for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1] and re[0]>t0]
+        szopi.sort()
+        kaki=[re[0] for re in rawevents if 'kaka' in re[1].lower() and re[0]>t0]
+        kaki.sort()        
+        testsuly=numpy.array([[re[0], float(re[2].split(' ')[0])/1e3] for re in rawevents if 'testsuly' in re[1].lower() and re[0]>t0])
+        szopi=(numpy.array(szopi))
+        kaki=(numpy.array(kaki))
+        m=max(kaki.max(),szopi.max())
+        #kaki-=m
+        #szopi-=m
+        return kaki[1:],numpy.diff(kaki)/3600.,szopi[1:],numpy.diff(szopi)/3600.,testsuly[:,0],testsuly[:,1]
+
     def format_events(self,events):
         return [{'date': e[0], 'time': e[1], 'category': e[2], 'note': ' '.join(e[3:-1])} for e in events]
         
@@ -90,8 +124,9 @@ class DataStorage(object):
 
 
 class TestUser(unittest.TestCase):
+    @unittest.skip('')
     def test_01_database(self):
-        d=DataStorage( '/tmp/1')
+        d=DataStorage('/tmp/1')
         t0=time.time()
         d.add_event(t0, note='proba')
         time.sleep(1)
@@ -101,6 +136,12 @@ class TestUser(unittest.TestCase):
         len2=len(d.read_events())
         self.assertEqual(len1-1,len2)
         d.format_events(d.read_events())
+    
+    def test_02_plot(self):
+        d=DataStorage('')
+        d.plot()
+        pass
+        
         
 if __name__ == "__main__":
     unittest.main()

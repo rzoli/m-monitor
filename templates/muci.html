@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset=utf-8>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{name}} Monitor: {{age}} {{weight}} {{height}}</title>
+<title>{{name}} Monitor: {{age}} {{weight}} {{height}} {{szopas_ota}}</title>
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 <html>
 <body>
@@ -53,6 +53,13 @@ Statisztika
 <form action="" method="post" id="logout">
     <input type="submit" value="Kilépes" name="kilepes">
 </form>
+
+
+
+<br><br>{{ utolso24ora }}
+<br><br><img src="plot.png" alt="plots?" width="800" height="600">
+<br><a href="http://192.168.0.10:2016/adel">Kamera</a> 
+<br><iframe src="http://192.168.0.10:2016/adel" width="600" height="400" style="border:none;">Kamera</iframe>
 
 </td>
 <td>
