@@ -41,13 +41,7 @@
 </form>
 <form action="" method="post" id="stat">
 Statisztika
-        <select name="stat_nev" form="stat">
-          <option value=""></option>
-          <option value="testsuly">Testsúly</option>
-          <option value="magassag">Magasság</option>
-          <option value="alvasido">Alvásidő</option>
-          <option value="alvas-eves-periodus">Alvás-evés periódus</option>
-        </select> 
+       
   <input type="submit" value="Mutat" name="mutat"> 
 </form>
 <form action="" method="post" id="logout">
@@ -55,13 +49,14 @@ Statisztika
 </form>
 
 
+<br><br><a href="http://192.168.1.3:2016/adel">Adel kamera</a> <br> {{ utolso24ora }}  
 
-<br><br>{{ utolso24ora }}
-<br><br><img src="plot.png" alt="plots?" width="800" height="600">
-<br><a href="http://192.168.0.10:2016/adel">Kamera</a> 
-<br><iframe src="http://192.168.0.10:2016/adel" width="600" height="400" style="border:none;">Kamera</iframe>
+
+<!--<br><iframe src="http://192.168.0.10:2016/adel" width="600" height="400" style="border:none;">Kamera</iframe>-->
 
 </td>
+
+
 <td>
 <!--
 <form action="" method="post" id="kereses">
