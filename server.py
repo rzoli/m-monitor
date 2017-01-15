@@ -1,4 +1,4 @@
-#TODO: plot tengelyekre felirat, gyors report: nem kell pisi, aktualis alvasido, homerseklet grafikonok napokra bontasa
+#TODO: plot tengelyekre felirat, gyors report:  homerseklet grafikonok napokra bontasa
 #TODO: lassu az egesz, optimalizalas: ne olvassa be az egeszet, csak ha a megfelelo linkre klikkelunk, ami sokaig tart: osszes esemeny beolvasasa majd megjelenitese
 ROOT='/home/rz/codes/m-monitor'
 CATEGORIES=['Szoptatas', 'Kaka', 'Alvas', 'Alvashoz leteve', 'Alvas vege', 'Pisi', 'Kaka, pisi','Szoptatas vege','Ures pelenka', 'Testsuly', 'Homerseklet', 'Magassag', 'Kinga haskorfogat', 'Kinga testsuly', 'Magzat kora', 'Eves', 'Seta', 'Jatek', 'Pelenkazas']
@@ -31,11 +31,13 @@ def index():
     app.logger.info(request.method)
     app.logger.info([[i, request.form[i]] for i in request.form])
     d=data_storage.DataStorage(ROOT)
+    user=''
+    n=-150
     if 'kilepes' in request.form:
         return redirect(url_for('logout'))
     if 'rogzit' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
-        d.add_event(timestamp, category=request.form['kategoria'], note=request.form['bejegyzes'],user=request.form['elvegezte'])
+        d.add_event(timestamp, category=request.form['kategoria'], note=request.form['bejegyzes'],user=user)
     elif 'torol' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['sorszam'], '%Y-%m-%d %H:%M').timetuple())
         d.remove_event(timestamp)
@@ -44,12 +46,32 @@ def index():
                             szopas_ota=d.szopasi_ido())
     elif 'vissza' in request.form:
         pass
+    elif 'frissit' in request.form:
+        pass
+    elif 'szopi' in request.form:
+        app.logger.info('sz')
+        timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
+        d.add_event(timestamp, category='Szoptatas', note=request.form['bejegyzes'],user=user)
+    elif 'kaki' in request.form:
+        timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
+        d.add_event(timestamp, category='Kaki', note=request.form['bejegyzes'],user=user)
+    elif 'alvashoz_le' in request.form:
+        timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
+        d.add_event(timestamp, category='Alvashoz leteve', note=request.form['bejegyzes'],user=user)
+    elif 'alvas' in request.form:
+        timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
+        d.add_event(timestamp, category='Alvas', note=request.form['bejegyzes'],user=user)        
+    elif 'vege' in request.form:
+        timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
+        d.add_event(timestamp, category='Alvas vege', note=request.form['bejegyzes'],user=user)                
+    elif 'osszes' in request.form:
+        n=0
     #app.logger.info(1)
-    events=d.read_events()[-500:][::-1]
+    events=d.read_events()[n:][::-1]
     #app.logger.info(2)
     now=time.time()
     return render_template('muci.html', name='Adel', age=d.calculate_timeleft(),#, weight='3000 g', height='15 cm', 
-                            szopas_ota=d.szopasi_ido(),utolso24ora=d.utolso24ora(),
+                            utolso24ora=d.utolso24ora(),
                            today=utils.timestamp2ymd(now), now=utils.timestamp2hm(now),
                            categories=CATEGORIES,
                            events=d.format_events(events), eventids=d.event_ids(events))
@@ -139,7 +161,7 @@ def napirend():
     ax.xaxis.set_major_formatter(DateFormatter('%H:00'))
     ax=fig.add_subplot(nplots,1,5)
     ax.set_title('Napi alvas',fontsize=12)
-    a=a[-14:]
+    a=a[-62:]
     x=[i[0] for i in a]
     y=[i[2] for i in a]
     ax.plot_date(x, y, 'v-')
@@ -210,5 +232,5 @@ if __name__ == "__main__":
             u.add(sys.argv[2],sys.argv[3])
     else:
         app.logger.info('Server started')
-        app.run(host= '0.0.0.0', port=2016)
+        app.run(host= '0.0.0.0', port=2016,threaded=True)
 

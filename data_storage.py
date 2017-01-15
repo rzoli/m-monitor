@@ -206,7 +206,7 @@ class DataStorage(object):
         
     def napi_kaki_szopi(self):
         rawevents= self.read_raw_events()
-        t0=time.time()-14*86400
+        t0=time.time()-62*86400
         kaki=numpy.array([re[0] for re in rawevents if ('kaka' in re[1].lower() or 'kaki' in re[1].lower()) and re[0]>t0])
         szopi=numpy.array([re[0] for re in rawevents if 'szoptatas' in re[1].lower() and re[0]>t0])
         kaki=self.timestamp2daystat(kaki)
@@ -255,6 +255,7 @@ class TestUser(unittest.TestCase):
     def test_02_plot(self):
         d=DataStorage('')
         d.plot()
+        d.utolso24ora()
         d.napirend()
         d.testsuly()
         d.pelenka()

@@ -9,7 +9,14 @@
 <tr>
 <td>
 <form action="" method="post" id="bejegyzes">
-  Bejegyzés Dátum <input type="date" name="datum" value={{today}}>
+    <input type="submit" value="Frissit" name="frissit">
+    <input type="submit" value="Szopi" name="szopi"><br>
+    <input type="submit" value="Kaki" name="kaki">
+    <input type="submit" value="Alvashoz le" name="alvashoz_le"><br>
+    <input type="submit" value="Alvas" name="alvas">
+    <input type="submit" value="Alvas vege" name="alvas_vege"><br>
+
+  Bejegyzés<br> Dátum <input type="date" name="datum" value={{today}}>
   Idő <input type="time" name="ido" value={{now}}> <br>
   Kategória  
         <select name="kategoria" form="bejegyzes">
@@ -19,15 +26,7 @@
                 {% endfor %}
         </select> <br>
   <input type="text" name="bejegyzes" size="30%">
-  <input type="submit" name="rogzit" value="Rögzít"><br>
-        Elvégezte
-       <select name="elvegezte" form="bejegyzes">
-          <option value=""></option>
-          <option value="Anya">Anya</option>
-          <option value="Apa">Apa</option>
-          <option value="Más">Más</option>
-        </select> 
-        
+  <input type="submit" name="rogzit" value="Rögzít">  
 <br><br>
   Javít
    <select name="sorszam" form="bejegyzes">
@@ -40,19 +39,20 @@
   <input type="submit" value="Töröl" name="torol"><br>
 </form>
 <form action="" method="post" id="stat">
-Statisztika
+
        
-  <input type="submit" value="Mutat" name="mutat"> 
+  <input type="submit" value="Statisztika" name="mutat">
+  <input type="submit" value="Osszeset mutat" name="osszes">  
 </form>
 <form action="" method="post" id="logout">
     <input type="submit" value="Kilépes" name="kilepes">
 </form>
 
 
-<br><br><a href="http://192.168.1.3:2016/adel">Adel kamera</a> <br> {{ utolso24ora }}  
+<br><br><a href="http://87.102.184.228:2017/adel">Adel kamera</a> <br> {{ utolso24ora }}  
 
 
-<!--<br><iframe src="http://192.168.0.10:2016/adel" width="600" height="400" style="border:none;">Kamera</iframe>-->
+<!--<br><iframe src="http://87.102.184.228:2017/adel" width="600" height="400" style="border:none;">Kamera</iframe>-->
 
 </td>
 
