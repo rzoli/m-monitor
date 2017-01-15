@@ -3,6 +3,7 @@ from visexpman.engine.generic import utils
 import datetime,numpy
 
 DBCONNECT_TIMEOUT=5
+PLOT_NAPOK=62
 
 class DataStorage(object):
     def __init__(self,root_path):
@@ -92,7 +93,23 @@ class DataStorage(object):
         now=time.time()
         szopi=len([re for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1] and re[0]>now-86400])
         kaki=len([re for re in rawevents if 'kaka' in re[1].lower() and re[0]>now-86400])
-        return 'Utobbi 24 oraban: {0} szoptatas | {1} kaki'.format(szopi,kaki)
+        ma=datetime.datetime.fromtimestamp(now)
+        ma=time.mktime(datetime.datetime(ma.year,ma.month,ma.day,0,0,0).timetuple())
+        tegnap=ma-86400
+        alvas=0
+        tegnapiesemenyek=[re for re in rawevents if re[0]>tegnap and re[0]<ma]
+        tegnapiesemenyek.sort()
+        maiesemenyek=[re for re in rawevents if re[0]>ma]
+        maiesemenyek.sort()
+        if tegnapiesemenyek[-1][1]=='Alvas':
+            alvas+=self.timestamp2daytime(maiesemenyek[0][0])
+        alvas_indexek=[i for i in range(len(maiesemenyek)) if maiesemenyek[i][1]=='Alvas']
+        for i in alvas_indexek:
+            if i==len(maiesemenyek)-1:
+                alvas+=now-maiesemenyek[i][0]
+            else:
+                alvas+=maiesemenyek[i+1][0]-maiesemenyek[i][0]
+        return 'Utobbi 24 oraban: {0} szoptatas | {1} kaki | Alvas mai nap {2:0.1f} ora | {3}'.format(szopi,kaki, alvas/3600.,self.szopasi_ido())
         
     def _utolso_het_szopi_kaki(self,t0):
         rawevents= self.read_raw_events()
@@ -206,7 +223,7 @@ class DataStorage(object):
         
     def napi_kaki_szopi(self):
         rawevents= self.read_raw_events()
-        t0=time.time()-62*86400
+        t0=time.time()-PLOT_NAPOK*86400
         kaki=numpy.array([re[0] for re in rawevents if ('kaka' in re[1].lower() or 'kaki' in re[1].lower()) and re[0]>t0])
         szopi=numpy.array([re[0] for re in rawevents if 'szoptatas' in re[1].lower() and re[0]>t0])
         kaki=self.timestamp2daystat(kaki)

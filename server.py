@@ -161,7 +161,7 @@ def napirend():
     ax.xaxis.set_major_formatter(DateFormatter('%H:00'))
     ax=fig.add_subplot(nplots,1,5)
     ax.set_title('Napi alvas',fontsize=12)
-    a=a[-62:]
+    a=a[-data_storage.PLOT_NAPOK:]
     x=[i[0] for i in a]
     y=[i[2] for i in a]
     ax.plot_date(x, y, 'v-')
