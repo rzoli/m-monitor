@@ -1,6 +1,7 @@
 #TODO: plot tengelyekre felirat, gyors report:  homerseklet grafikonok napokra bontasa
 #TODO: lassu az egesz, optimalizalas: ne olvassa be az egeszet, csak ha a megfelelo linkre klikkelunk, ami sokaig tart: osszes esemeny beolvasasa majd megjelenitese
-ROOT='/home/rz/codes/m-monitor'
+import sys
+ROOT='/home/rz/codes/m-monitor'# if len(sys.argv)==1 else sys.argv[2]
 CATEGORIES=['Szoptatas', 'Kaka', 'Alvas', 'Alvashoz leteve', 'Alvas vege', 'Pisi', 'Kaka, pisi','Szoptatas vege','Ures pelenka', 'Testsuly', 'Homerseklet', 'Magassag', 'Kinga haskorfogat', 'Kinga testsuly', 'Magzat kora', 'Eves', 'Seta', 'Jatek', 'Pelenkazas']
 from visexpman.engine.generic import utils
 import user,numpy,logging,data_storage,os,time,datetime,sys
@@ -32,7 +33,7 @@ def index():
     app.logger.info([[i, request.form[i]] for i in request.form])
     d=data_storage.DataStorage(ROOT)
     user=''
-    n=-150
+    timespan=86400*30
     if 'kilepes' in request.form:
         return redirect(url_for('logout'))
     if 'rogzit' in request.form:
@@ -54,21 +55,19 @@ def index():
         d.add_event(timestamp, category='Szoptatas', note=request.form['bejegyzes'],user=user)
     elif 'kaki' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
-        d.add_event(timestamp, category='Kaki', note=request.form['bejegyzes'],user=user)
+        d.add_event(timestamp, category='Kaka', note=request.form['bejegyzes'],user=user)
     elif 'alvashoz_le' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
         d.add_event(timestamp, category='Alvashoz leteve', note=request.form['bejegyzes'],user=user)
     elif 'alvas' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
         d.add_event(timestamp, category='Alvas', note=request.form['bejegyzes'],user=user)        
-    elif 'vege' in request.form:
+    elif 'alvas_vege' in request.form:
         timestamp=time.mktime(datetime.datetime.strptime(request.form['datum']+' '+request.form['ido'], '%Y-%m-%d %H:%M').timetuple())
         d.add_event(timestamp, category='Alvas vege', note=request.form['bejegyzes'],user=user)                
     elif 'osszes' in request.form:
-        n=0
-    #app.logger.info(1)
-    events=d.read_events()[n:][::-1]
-    #app.logger.info(2)
+        timespan=None
+    events=d.read_events(timespan)[::-1]
     now=time.time()
     return render_template('muci.html', name='Adel', age=d.calculate_timeleft(),#, weight='3000 g', height='15 cm', 
                             utolso24ora=d.utolso24ora(),
@@ -82,7 +81,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']        
-        u=user.User( ROOT)
+        u=user.User(ROOT)
         if u.login(username,password):
             u.id=int(numpy.random.random()*1e6)
             login_user(u)
@@ -198,8 +197,8 @@ def napirend():
     ax=fig.add_subplot(nplots,1,8)
     ax.set_title('Kaki,szopi',fontsize=12)
     ax.xaxis.set_major_formatter(DateFormatter('%m.%d'))
-    ax.plot_date(list(kaki[:,0]),list(kaki[:,1]),'o-')
-    ax.plot_date(list(szopi[:,0]),list(szopi[:,1]),'o-')
+    ax.plot_date(list(kaki[:,0]),list(kaki[:,1]),'o-', markersize=3)
+    ax.plot_date(list(szopi[:,0]),list(szopi[:,1]),'o-', markersize=3)
     ax.grid(True)
     ax.legend(['Kaki','szopi'],loc='upper left',prop={'size':7})
     fig.tight_layout()

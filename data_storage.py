@@ -41,8 +41,11 @@ class DataStorage(object):
         self.db.commit()
         logging.info('event added: {0}, {1}, {2}, {3}'.format(timestamp, category,note,user))
         
-    def read_events(self):
+    def read_events(self, timespan=None):
         rawevents= self.read_raw_events()
+        if timespan !=None:
+            t0=time.time()-timespan
+            rawevents=[re for re in rawevents if re[0]>t0]
         #Sort raw events first
         t=[re[0] for re in rawevents]
         t.sort()
@@ -92,7 +95,7 @@ class DataStorage(object):
         rawevents= self.read_raw_events()
         now=time.time()
         szopi=len([re for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1] and re[0]>now-86400])
-        kaki=len([re for re in rawevents if 'kaka' in re[1].lower() and re[0]>now-86400])
+        kaki=len([re for re in rawevents if 'kak' in re[1].lower() and re[0]>now-86400])
         ma=datetime.datetime.fromtimestamp(now)
         ma=time.mktime(datetime.datetime(ma.year,ma.month,ma.day,0,0,0).timetuple())
         tegnap=ma-86400
@@ -102,7 +105,10 @@ class DataStorage(object):
         maiesemenyek=[re for re in rawevents if re[0]>ma]
         maiesemenyek.sort()
         if tegnapiesemenyek[-1][1]=='Alvas':
-            alvas+=self.timestamp2daytime(maiesemenyek[0][0])
+            if len(maiesemenyek)>0:
+                alvas+=self.timestamp2daytime(maiesemenyek[0][0])
+            else:
+                alvas+=self.timestamp2daytime(now)
         alvas_indexek=[i for i in range(len(maiesemenyek)) if maiesemenyek[i][1]=='Alvas']
         for i in alvas_indexek:
             if i==len(maiesemenyek)-1:
@@ -116,7 +122,7 @@ class DataStorage(object):
         #Szoptatas, kaki over time
         szopi=[re[0] for re in rawevents if 'Szoptatas' in re[1] and 'vege' not in re[1] and re[0]>t0]
         szopi.sort()
-        kaki=[re[0] for re in rawevents if 'kaka' in re[1].lower() and re[0]>t0]
+        kaki=[re[0] for re in rawevents if 'kak' in re[1].lower() and re[0]>t0]
         kaki.sort()
         return szopi,kaki,rawevents,t0
 
